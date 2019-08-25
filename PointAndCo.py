@@ -110,3 +110,10 @@ class Rectangle:
 
     def center(self):
         return self.start + self.extent / 2
+
+    def contains_point(self, point):
+        x, y = Point(point).xy
+        return x >= self.start.x and \
+               x <= self.end.x and \
+               y >= self.start.y and \
+               y <= self.end.y

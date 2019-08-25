@@ -211,3 +211,13 @@ class TestRectangle(unittest.TestCase):
         tobj = Rectangle([100, 100], [300, 300])
         center = tobj.center()
         self.assertEqual(Point(200, 200), center)
+
+    def test_contains_point(self):
+        tobj = Rectangle([100, 100], [300, 300])
+        self.assertTrue(tobj.contains_point((200,200)))
+        self.assertTrue(tobj.contains_point((100,100)))
+        self.assertTrue(tobj.contains_point((300,300)))
+        self.assertFalse(tobj.contains_point((99,100)))
+        self.assertFalse(tobj.contains_point((100,99)))
+        self.assertFalse(tobj.contains_point((301,100)))
+        self.assertFalse(tobj.contains_point((100,301)))

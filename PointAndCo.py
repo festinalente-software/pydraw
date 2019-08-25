@@ -107,3 +107,6 @@ class Rectangle:
 
     def __str__(self):
         return f'[{self.start}-{self.end}]'
+
+    def center(self):
+        return self.start + self.extent / 2

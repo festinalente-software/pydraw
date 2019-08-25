@@ -206,3 +206,8 @@ class TestRectangle(unittest.TestCase):
         s = str(tobj)
         self.assertTrue(s == '[(1,3)-(5,9)]')
         self.assertTrue(f'{tobj}' == '[(1,3)-(5,9)]')
+
+    def test_center(self):
+        tobj = Rectangle([100, 100], [300, 300])
+        center = tobj.center()
+        self.assertEqual(Point(200, 200), center)

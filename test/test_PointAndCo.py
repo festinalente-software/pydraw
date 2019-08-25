@@ -76,6 +76,56 @@ class TestPoint(unittest.TestCase):
         self.assertTrue(s == '(5,9)')
         self.assertTrue(f'{tobj}' == '(5,9)')
 
+    def test_add(self):
+        p1 = Point(1, 3)
+        p2 = Point(5, 9)
+        p3 = p1 + p2
+        self.assertEqual(Point(6, 12), p3)
+
+        tobj = Point(p1)
+        tobj += p2
+        self.assertEqual(Point(6, 12), tobj)
+
+        p4 = p1 + (6, 10)
+        self.assertEqual(Point(7, 13), p4)
+
+    def test_sub(self):
+        p1 = Point(1, 3)
+        p2 = Point(5, 9)
+        p3 = p2 - p1
+        self.assertEqual(Point(4, 6), p3)
+
+        tobj = Point(p2)
+        tobj -= p1
+        self.assertEqual(Point(4, 6), tobj)
+
+        p4 = p2 - (6, 10)
+        self.assertEqual(Point(-1, -1), p4)
+
+    def test_mul(self):
+        p1 = Point(1, 3)
+        tobj = p1 * 2
+        self.assertEqual(Point(2, 6), tobj)
+        tobj = p1 * Point(3, 2)
+        self.assertEqual(Point(3, 6), tobj)
+        tobj = p1 * (2, 3)
+        self.assertEqual(Point(2, 9), tobj)
+        tobj = -p1
+        self.assertEqual(Point(-1, -3), tobj)
+
+    def test_div(self):
+        p1 = Point(1, 3)
+        tobj = p1 / 2
+        self.assertEqual(Point(0.5, 1.5), tobj)
+        tobj = p1 / Point(3, 2)
+        self.assertEqual(Point(1 / 3, 3 / 2), tobj)
+
+    def test_ng(self):
+        p1 = Point(1, 3)
+        tobj = -p1
+        self.assertEqual(Point(1, 3), p1)
+        self.assertEqual(Point(-1, -3), tobj)
+
 
 class TestRectangle(unittest.TestCase):
 
@@ -129,6 +179,12 @@ class TestRectangle(unittest.TestCase):
         e = Point(5, 1)
         tobj = Rectangle(s, e)
         self.assertEqual(8, tobj.height)
+
+    def test_extent(self):
+        s = Point(3, 9)
+        e = Point(5, 1)
+        tobj = Rectangle(s, e)
+        self.assertEqual((2, 8), tobj.extent)
 
     def test_eq(self):
         s = Point(3, 9)

@@ -30,6 +30,37 @@ class Point:
     def __str__(self):
         return f'({self.x},{self.y})'
 
+    def __add__(self, other):
+        if not isinstance(other, Point):
+            other = Point(other)
+
+        return Point(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):
+        if not isinstance(other, Point):
+            other = Point(other)
+
+        return Point(self.x - other.x, self.y - other.y)
+
+    def __mul__(self, *args):
+        if len(args) == 1:
+            f = args[0]
+            if isinstance(f, (int, float)):
+                return Point(self.x * f, self.y * f)
+        fx, fy = Point(*args).xy
+        return Point(self.x * fx, self.y * fy)
+
+    def __truediv__(self, *args):
+        if len(args) == 1:
+            f = args[0]
+            if isinstance(f, (int, float)):
+                return Point(self.x / f, self.y / f)
+        fx, fy = Point(*args).xy
+        return Point(self.x / fx, self.y / fy)
+
+    def __neg__(self):
+        return Point(-self.x, -self.y)
+
 
 class Rectangle:
     def __init__(self, srt, end=None):
@@ -54,6 +85,10 @@ class Rectangle:
     @property
     def height(self):
         return self.end.y - self.start.y
+
+    @property
+    def extent(self):
+        return Point(self.width, self.height)
 
     def flat_xy(self):
         return self.start.xy + self.end.xy

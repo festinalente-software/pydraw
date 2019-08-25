@@ -68,7 +68,7 @@ class TestPoint(unittest.TestCase):
     def test_repr(self):
         tobj = Point(5, 9)
         r = repr(tobj)
-        self.assertTrue(r == 'Point(x=5,y=9)')
+        self.assertTrue(r == 'Point(5,9)')
 
     def test_str(self):
         tobj = Point(5, 9)
@@ -199,7 +199,7 @@ class TestRectangle(unittest.TestCase):
     def test_repr(self):
         tobj = Rectangle([1, 3, 5, 9])
         r = repr(tobj)
-        self.assertEqual('Rectangle(start=Point(x=1,y=3),end=Point(x=5,y=9))', r)
+        self.assertEqual('Rectangle(Point(1,3),Point(5,9))', r)
 
     def test_str(self):
         tobj = Rectangle([1, 3], [5, 9])

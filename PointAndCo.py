@@ -25,7 +25,7 @@ class Point:
         return self.xy == other.xy
 
     def __repr__(self):
-        return f'Point(x={self.x},y={self.y})'
+        return f'Point({self.x},{self.y})'
 
     def __str__(self):
         return f'({self.x},{self.y})'
@@ -103,7 +103,7 @@ class Rectangle:
         return self.flat_xy() == other.flat_xy()
 
     def __repr__(self):
-        return f'Rectangle(start={repr(self.start)},end={repr(self.end)})'
+        return f'Rectangle({repr(self.start)},{repr(self.end)})'
 
     def __str__(self):
         return f'[{self.start}-{self.end}]'

@@ -9,6 +9,7 @@ def main():
 
     canvas = PyDrawCanvas(master=top)
     canvas.pack(fill=tk.BOTH, expand=True)
+    canvas.init_after_pack()
 
     canvas.add_element(TextElement(position=canvas.drawing_area.center(), text='Hello PyDraw'))
 

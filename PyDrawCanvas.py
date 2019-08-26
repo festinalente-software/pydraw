@@ -1,10 +1,12 @@
 import tkinter as tk
+from datetime import datetime
 from tkinter import messagebox, PhotoImage
 
 from DrawingContext import DrawingContext
 from DrawingElements import LineElement
 from MainMenu import MainMenu
 from PointAndCo import Rectangle, Point
+from StatusBar import StatusBar
 
 
 class PyDrawCanvas(tk.Canvas):
@@ -14,9 +16,12 @@ class PyDrawCanvas(tk.Canvas):
         self.elements = []
         self.init_events()
         self.init_menubar()
+        self.init_context()
         self.set_appicon()
         self.set_title()
-        self.init_context()
+        self.statusbar = None
+
+    # region Inits
 
     def set_appicon(self):
         self.master.tk.call('wm', 'iconphoto', self.master._w, PhotoImage(file='appicon.png'))
@@ -38,6 +43,13 @@ class PyDrawCanvas(tk.Canvas):
         self.canvas_area = Rectangle((0, 0, self.winfo_width(), self.winfo_height()))
         self.drawing_context = DrawingContext(orig=self.drawing_area, target=self.canvas_area, border=0.05)
 
+    def init_after_pack(self):
+        self.create_statusbar()
+
+    # endregion
+
+    # region Events
+
     def on_resize(self, event):
         self.canvas_area = Rectangle((0, 0, self.winfo_width(), self.winfo_height()))
         self.drawing_context.target_rect = self.canvas_area
@@ -57,9 +69,30 @@ class PyDrawCanvas(tk.Canvas):
             self._last_click_position = d_point
         self.redraw()
 
+    def on_closing(self):
+        if not messagebox.askokcancel(
+                'Exit Tool',
+                'Do you really want to exit this tool?'):
+            return
+        self.master.destroy()
+
+    # endregion
+
+    # region Elements
+
     def add_element(self, drawing_element):
         self.elements.append(drawing_element)
         self.redraw()
+
+    def new_drawing(self):
+        self.setStatusMessage(text='Creating new drawing')
+        self.elements = []
+        self.redraw()
+        self.setStatusMessage(text='Created new drawing', resetInSecs=5)
+
+    # endregion
+
+    # region Drawing
 
     def redraw(self):
         self.delete("all")
@@ -76,13 +109,32 @@ class PyDrawCanvas(tk.Canvas):
         flat_points = [item for p in points for item in p.xy]
         self.create_line(*flat_points)
 
-    def new_drawing(self):
-        self.elements = []
-        self.redraw()
+    # endregion
 
-    def on_closing(self):
-        if not messagebox.askokcancel(
-                'Exit Tool',
-                'Do you really want to exit this tool?'):
-            return
-        self.master.destroy()
+    # region Statusbar
+
+    def create_statusbar(self):
+        self.statusbar = StatusBar(master=self.master)
+        self.statusbar.pack(fill=tk.X)
+
+    def setStatusMessage(self, **kwargs):
+        if self.statusbar:
+            self.statusbar.setMessage(**kwargs)
+        else:
+            txt = kwargs.get("text", "")
+            print(f'{datetime.now()} Status:  {txt}')
+
+    def setProgress(self, **kwargs):
+        if self.statusbar:
+            self.statusbar.setProgress(**kwargs)
+        else:
+            ptext = kwargs.get('text', '')
+            value = kwargs.get('value', 0)
+            range = kwargs.get('maximum', 0)
+            progr = "" if not value \
+                else f'[{value}]' if not range \
+                else f'[{value}/{range}]'
+
+            print(f'{datetime.now()} Progress: {progr} - {ptext}')
+
+    # endregion

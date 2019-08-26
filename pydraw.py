@@ -6,7 +6,6 @@ from PyDrawCanvas import PyDrawCanvas
 
 def main():
     top = tk.Tk()
-    top.title("PyDraw by Festina Lente Software ")
 
     canvas = PyDrawCanvas(master=top)
     canvas.pack(fill=tk.BOTH, expand=True)

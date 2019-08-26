@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, PhotoImage
 
 from DrawingContext import DrawingContext
 from DrawingElements import LineElement
@@ -13,8 +13,16 @@ class PyDrawCanvas(tk.Canvas):
         super().__init__(master=master, **kwargs)
         self.elements = []
         self.init_events()
-        self.init_menubar(master)
+        self.init_menubar()
+        self.set_appicon()
+        self.set_title()
         self.init_context()
+
+    def set_appicon(self):
+        self.master.tk.call('wm', 'iconphoto', self.master._w, PhotoImage(file='appicon.png'))
+
+    def set_title(self):
+        self.master.title("PyDraw by Festina Lente Software ")
 
     def init_events(self):
         self.focus_set()
@@ -22,8 +30,8 @@ class PyDrawCanvas(tk.Canvas):
         self.bind("<ButtonPress-1>", self.on_left_click)
         self.master.protocol('WM_DELETE_WINDOW', self.on_closing)
 
-    def init_menubar(self, master):
-        self.menubar = MainMenu(master, self)
+    def init_menubar(self):
+        self.menubar = MainMenu(self.master, self)
 
     def init_context(self):
         self.drawing_area = Rectangle((0, 0, 1000, 1000))

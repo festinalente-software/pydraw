@@ -2,6 +2,7 @@ import tkinter as tk
 
 from DrawingContext import DrawingContext
 from DrawingElements import LineElement
+from MainMenu import MainMenu
 from PointAndCo import Rectangle, Point
 
 
@@ -10,12 +11,18 @@ class PyDrawCanvas(tk.Canvas):
     def __init__(self, master=None, **kwargs):
         super().__init__(master=master, **kwargs)
         self.elements = []
-        self.initEvents()
+        self.init_events()
+        self.init_menubar(master)
         self.init_context()
 
-    def initEvents(self):
+    def init_events(self):
+        self.focus_set()
         self.bind("<Configure>", self.on_resize)
         self.bind("<ButtonPress-1>", self.on_left_click)
+        self.master.protocol('WM_DELETE_WINDOW', self.on_closing)
+
+    def init_menubar(self, master):
+        self.menubar = MainMenu(master, self)
 
     def init_context(self):
         self.drawing_area = Rectangle((0, 0, 1000, 1000))
@@ -31,7 +38,7 @@ class PyDrawCanvas(tk.Canvas):
         x, y = event.x, event.y
         d_point = self.drawing_context.transposeBack(Point(x, y))
         if not self.drawing_area.contains_point(d_point):
-            #ignore outside border
+            # ignore outside border
             return
 
         if hasattr(self, '_last_click_position') and self._last_click_position:
@@ -47,9 +54,7 @@ class PyDrawCanvas(tk.Canvas):
 
     def redraw(self):
         self.delete("all")
-
         self.draw_border()
-
         for element in self.elements:
             element.draw_on_canvas(self, self.drawing_context)
 
@@ -57,8 +62,14 @@ class PyDrawCanvas(tk.Canvas):
         ctx = self.drawing_context
         p1 = ctx.transpose(self.drawing_area.start)
         p3 = ctx.transpose(self.drawing_area.end)
-        p2, p4  = Point(p1.x,p3.y), Point(p3.x, p1.y)
-        points = [ p1, p2, p3, p4, p1 ]
-        flat_points = [ item for p in points for item in p.xy ]
+        p2, p4 = Point(p1.x, p3.y), Point(p3.x, p1.y)
+        points = [p1, p2, p3, p4, p1]
+        flat_points = [item for p in points for item in p.xy]
         self.create_line(*flat_points)
 
+    def new_drawing(self):
+        self.elements = []
+        self.redraw()
+
+    def on_closing(self):
+        self.master.destroy()

@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 
 from DrawingContext import DrawingContext
 from DrawingElements import LineElement
@@ -72,4 +73,8 @@ class PyDrawCanvas(tk.Canvas):
         self.redraw()
 
     def on_closing(self):
+        if not messagebox.askokcancel(
+                'Exit Tool',
+                'Do you really want to exit this tool?'):
+            return
         self.master.destroy()

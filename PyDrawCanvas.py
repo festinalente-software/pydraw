@@ -2,6 +2,7 @@ import tkinter as tk
 from datetime import datetime
 from tkinter import messagebox, PhotoImage
 
+from DragAndDropOperation import Drp_DrawLine
 from DrawingContext import DrawingContext
 from DrawingElements import LineElement
 from MainMenu import MainMenu
@@ -20,6 +21,7 @@ class PyDrawCanvas(tk.Canvas):
         self.set_appicon()
         self.set_title()
         self.statusbar = None
+        self.drp_Operation = None
 
     # region Inits
 
@@ -33,18 +35,30 @@ class PyDrawCanvas(tk.Canvas):
         self.focus_set()
         self.bind("<Configure>", self.on_resize)
         self.bind("<ButtonPress-1>", self.on_left_click)
+        self.bind("<B1-Motion>", self.on_drag)
+        self.bind("<ButtonRelease-1>", self.on_drop)
         self.master.protocol('WM_DELETE_WINDOW', self.on_closing)
 
     def init_menubar(self):
         self.menubar = MainMenu(self.master, self)
+
+    def init_after_pack(self):
+        self.create_statusbar()
+
+    # endregion
+
+    # region DrawingContext
 
     def init_context(self):
         self.drawing_area = Rectangle((0, 0, 1000, 1000))
         self.canvas_area = Rectangle((0, 0, self.winfo_width(), self.winfo_height()))
         self.drawing_context = DrawingContext(orig=self.drawing_area, target=self.canvas_area, border=0.05)
 
-    def init_after_pack(self):
-        self.create_statusbar()
+    def transposeBack(self, pos):
+        return self.drawing_context.transposeBack(pos)
+
+    def transpose(self, pos):
+        return self.drawing_context.transpose(pos)
 
     # endregion
 
@@ -62,12 +76,10 @@ class PyDrawCanvas(tk.Canvas):
             # ignore outside border
             return
 
-        if hasattr(self, '_last_click_position') and self._last_click_position:
-            self.add_element(LineElement(start=self._last_click_position, end=d_point))
-            self._last_click_position = None
-        else:
-            self._last_click_position = d_point
+        newLine = LineElement(start=d_point, end=d_point + (1, 1))
+        self.add_element(newLine)
         self.redraw()
+        self.drp_Operation = Drp_DrawLine(self, Point(x, y), newLine)
 
     def on_closing(self):
         if not messagebox.askokcancel(
@@ -75,6 +87,15 @@ class PyDrawCanvas(tk.Canvas):
                 'Do you really want to exit this tool?'):
             return
         self.master.destroy()
+
+    def on_drag(self, event):
+        if self.drp_Operation:
+            self.drp_Operation.on_drag((event.x, event.y))
+
+    def on_drop(self, event):
+        if self.drp_Operation:
+            self.drp_Operation.on_drop((event.x, event.y))
+            self.drp_Operation = None
 
     # endregion
 

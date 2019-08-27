@@ -20,6 +20,14 @@ class DrawingElement:
     def focus_color(self):
         return "red"
 
+    @property
+    def widget(self):
+        return None if not hasattr(self, '_widget') else self._widget
+
+    @widget.setter
+    def widget(self, obj):
+        self._widget = obj
+
 
 class TextElement(DrawingElement):
     position: Point
@@ -32,7 +40,7 @@ class TextElement(DrawingElement):
 
     def draw_on_canvas(self, canvas, context: DrawingContext):
         pos = context.transpose(self.position)
-        canvas.create_text(*pos.xy, text=self.text, activefill=self.focus_color)
+        self.widget = canvas.create_text(*pos.xy, text=self.text, activefill=self.focus_color)
 
 
 class LineElement(DrawingElement):
@@ -44,4 +52,4 @@ class LineElement(DrawingElement):
     def draw_on_canvas(self, canvas, context: DrawingContext):
         flat_xy = list(context.transpose(self.start).xy)
         flat_xy.extend(context.transpose(self.end).xy)
-        canvas.create_line(flat_xy, activefill=self.focus_color)
+        self.widget = canvas.create_line(flat_xy, activefill=self.focus_color)

@@ -28,6 +28,13 @@ class DrawingElement:
     def widget(self, obj):
         self._widget = obj
 
+    def bindEventsFor(self, elem, canvas):
+        def onObjClick(event) :
+            canvas.on_object_click(self, event)
+        canvas.tag_bind(elem, '<ButtonPress-1>', onObjClick)
+
+    def moveBy(self, delta):
+        raise NotImplemented()
 
 class TextElement(DrawingElement):
     position: Point
@@ -45,6 +52,7 @@ class TextElement(DrawingElement):
         fsize = int(context.scaled(self.font_size))
         self.widget = canvas.create_text(*pos.xy, text=self.text, font=(self.font_name, fsize),
                                          activefill=self.focus_color)
+        self.bindEventsFor(self.widget, canvas)
 
     @property
     def font_size(self):
@@ -70,6 +78,8 @@ class TextElement(DrawingElement):
     def Set_Default_Fontname(cls, newvalue):
         cls._Default_Font_Name = newvalue
 
+    def moveBy(self, delta):
+        self.position += delta
 
 class LineElement(DrawingElement):
     def __init__(self, start, end):
@@ -81,3 +91,8 @@ class LineElement(DrawingElement):
         flat_xy = list(context.transpose(self.start).xy)
         flat_xy.extend(context.transpose(self.end).xy)
         self.widget = canvas.create_line(flat_xy, activefill=self.focus_color)
+        self.bindEventsFor(self.widget, canvas)
+
+    def moveBy(self, delta):
+        self.start += delta
+        self.end += delta

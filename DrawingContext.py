@@ -72,6 +72,9 @@ class DrawingContext:
     def transpose(self, point):
         return (point + self.o_translate()) * self.scale() + self.t_translate()
 
+    def scaled(self, size):
+        return size * self.scale()
+
     def transposeBack(self, pos):
         if self.scale():
             return (pos - self.t_translate()) / self.scale() - self.o_translate()

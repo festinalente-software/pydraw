@@ -33,14 +33,42 @@ class TextElement(DrawingElement):
     position: Point
     text: str
 
-    def __init__(self, position, text):
+    def __init__(self, position, text, font_size=None, font_name=None):
         super().__init__()
         self.position = Point(position)
         self.text = str(text)
+        self.font_size = font_size if font_size is not None else self.__class__.Get_Default_Fontsize()
+        self.font_name = font_name if font_name is not None else self.__class__.Get_Default_Fontname()
 
     def draw_on_canvas(self, canvas, context: DrawingContext):
         pos = context.transpose(self.position)
-        self.widget = canvas.create_text(*pos.xy, text=self.text, activefill=self.focus_color)
+        fsize = int(context.scaled(self.font_size))
+        self.widget = canvas.create_text(*pos.xy, text=self.text, font=(self.font_name, fsize),
+                                         activefill=self.focus_color)
+
+    @property
+    def font_size(self):
+        return self._font_size
+
+    @font_size.setter
+    def font_size(self, newvalue):
+        self._font_size = newvalue
+
+    @classmethod
+    def Get_Default_Fontsize(cls):
+        return  50 if not hasattr(cls,'_Default_Font_Size') else cls._Default_Font_Size
+
+    @classmethod
+    def Set_Default_Fontsize(cls, newvalue):
+        cls._Default_Font_Size = newvalue
+
+    @classmethod
+    def Get_Default_Fontname(cls):
+        return  "TkDefaultFont" if not hasattr(cls,'_Default_Font_Name') else cls._Default_Font_Name
+
+    @classmethod
+    def Set_Default_Fontname(cls, newvalue):
+        cls._Default_Font_Name = newvalue
 
 
 class LineElement(DrawingElement):

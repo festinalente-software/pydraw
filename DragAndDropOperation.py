@@ -1,20 +1,22 @@
 from PointAndCo import Point
 
+import logging
+logger = logging.getLogger(__name__)
 
 class DragAndDropOperation:
     def __init__(self, owner, startPos):
         self.owner = owner
         self.startPos = Point(startPos)
-        print(f'Start Drp on pos={startPos}')
+        logger.debug (f'Start Drp on pos={startPos}')
 
     def on_drag(self, newPos):
         newPos = Point(newPos)
-        print(f'Drag to pos={newPos}')
+        logger.debug (f'Drag to pos={newPos}')
 
     def on_drop(self, dropPos):
         dropPos = Point(dropPos)
         rPos = self.owner.transposeBack(dropPos)
-        print(f'Drop on pos={dropPos}  rPos={rPos}')
+        logger.debug (f'Drop on pos={dropPos}  rPos={rPos}')
 
 
 class Drp_DrawLine(DragAndDropOperation):
@@ -32,6 +34,6 @@ class Drp_DrawLine(DragAndDropOperation):
     def on_drop(self, dropPos):
         dropPos = Point(dropPos)
         rPos = self.owner.transposeBack(dropPos)
-        print(f'Drop on pos={dropPos}  rPos={rPos}')
+        logger.debug (f'Drop on pos={dropPos}  rPos={rPos}')
         self.lineObj.end = rPos
         self.owner.redraw()
